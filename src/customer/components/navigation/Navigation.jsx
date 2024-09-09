@@ -23,9 +23,9 @@ function classNames(...classes) {
 export default function Navigation() {
 	const [loginModal, setLoginModal] = useState(false);
 	const [registerModal, setRegisterModal] = useState(false);
-	const { isLogged } = useGlobalContext();
+	const { isLogged, token, logout, setIsLogged } = useGlobalContext();
+	console.log(isLogged);
 	const [open, setOpen] = useState(false);
-	const { token, logout } = useGlobalContext();
 	// const [close, setClose] = useState(false);
 	const navigate = useNavigate();
 
@@ -194,46 +194,62 @@ export default function Navigation() {
 											</div>
 										))}
 									</div>
-									<div className=" lg:hidden">
-										<Avatar
-											className="text-white"
-											onClick={handleUserClick}
-											aria-controls={open ? "basic-menu" : undefined}
-											aria-haspopup="true"
-											aria-expanded={open ? "true" : undefined}
-											sx={{
-												bgcolor: deepPurple[500],
-												color: "white",
-												cursor: "pointer",
-											}}
-										>
-											R
-										</Avatar>
-										<Menu
-											anchorEl={anchorEl}
-											open={openUserMenu}
-											onClose={handleCloseUserMenu}
-										>
-											<MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem>
-											<MenuItem
-												onClick={() => {
-													navigate("/account/order");
+									{/* mobile view */}
+									{isLogged ? (
+										<div className=" lg:hidden px-5 ">
+											<Avatar
+												className="text-white"
+												onClick={handleUserClick}
+												aria-controls={open ? "basic-menu" : undefined}
+												aria-haspopup="true"
+												aria-expanded={open ? "true" : undefined}
+												sx={{
+													bgcolor: deepPurple[500],
+													color: "white",
+													cursor: "pointer",
 												}}
 											>
-												My Orders
-											</MenuItem>
-											<MenuItem onClick={handleCloseUserMenu}>Logout</MenuItem>
-										</Menu>
-									</div>
+												R
+											</Avatar>
+											<Menu
+												anchorEl={anchorEl}
+												open={openUserMenu}
+												onClose={handleCloseUserMenu}
+											>
+												<MenuItem
+													className="bg-red-500 font-bold"
+													onClick={handleCloseUserMenu}
+												>
+													Profile
+												</MenuItem>
+												<MenuItem
+													onClick={(e) => {
+														e.stopPropagation();
+														navigate("/account/order");
+													}}
+												>
+													My Orders
+												</MenuItem>
+												<MenuItem onClick={handleCloseUserMenu}>
+													Logout
+												</MenuItem>
+											</Menu>
+										</div>
+									) : (
+										<Button
+											sx={{ mx: "10px" }}
+											onClick={() => setLoginModal(true)}
+											className="text-sm self-start bg-red-500 font-medium border border-red-500 text-gray-800 hover:text-gray-800"
+										>
+											Sign In
+										</Button>
+									)}
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>
 					</Dialog>
 				</Transition.Root>
 				<header className="relative bg-white">
-					<p className="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
-						Get free delivery on orders over $100
-					</p>
 					<nav aria-label="Top" className="mx-auto">
 						<div className="border-b border-gray-200">
 							<div className="flex h-16 items-center">
@@ -258,7 +274,7 @@ export default function Navigation() {
 									</a>
 								</div>
 								{/* Flyout menus */}
-								<Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch">
+								<Popover.Group className="hidden  lg:ml-8 lg:block lg:self-stretch">
 									<div className="flex h-full space-x-8">
 										{navigation.categories.map((category) => (
 											<Popover key={category.name} className="flex">
@@ -387,7 +403,7 @@ export default function Navigation() {
 								<div className="ml-auto flex items-center">
 									<div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
 										{isLogged ? (
-											<div>
+											<div className="">
 												<Avatar
 													className="text-white"
 													onClick={handleUserClick}

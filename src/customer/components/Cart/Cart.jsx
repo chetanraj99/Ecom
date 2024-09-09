@@ -6,62 +6,66 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart } from "../../../state/Cart/Action";
 
 const Cart = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const handleCheckOut = () => navigate("/checkout?step=2");
-  const {cart}=useSelector(store=>store);
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const cart = useSelector((store) => store.cart); // Only select the cart part of the state
+	// console.log("cart", cart);
 
-  useEffect(()=>{
-    dispatch(getCart())
-    },[cart.updateCartItem,cart.deleteCartItem]);
-    
+	const handleCheckOut = () => navigate("/checkout?step=2");
 
-  return (
-    <div>
-      <div className="lg:grid grid-cols-3 lg:px-16 relative">
-        <div className="col-span-2">
-          {cart.cart?.cartItem.map((item) => (
-            <CartItem item={item}/>
-          ))}
-        </div>
-        <div className="px-5 sticky top-0 h-[100vh] mt-5 lg:mt-0">
-          <div className="border">
-            <p className="uppercase font-bold opacity-60 pb-4">Price details</p>
-            <hr />
-            <div className="space-y-3 font-semibold mb-10">
-              <div className="flex justify-between pt-3 text-black">
-                <span>Price</span>
-                <span>₹{cart.cart?.totalPirce}</span>
-              </div>
+	useEffect(() => {
+		dispatch(getCart());
+	}, [dispatch, cart.updateCartItem, cart.deleteCartItem]);
 
-              <div className="flex justify-between pt-3 ">
-                <span>Discount</span>
-                <span className="text-green-600">-₹{cart.cart?.discount}</span>
-              </div>
+	return (
+		<div>
+			<div className="lg:grid grid-cols-3 lg:px-16 relative">
+				<div className="col-span-2 mt-4">
+					{cart.cartItems.length &&
+						cart?.cartItems.map((item) => (
+							<CartItem item={item} key={item.id} />
+						))}
+				</div>
+				<div className="px-5 sticky top-0 h-[100vh] mt-5 lg:mt-0 p-5">
+					<div className="border p-4">
+						<p className="uppercase font-bold opacity-60 pb-4">Price details</p>
+						<hr />
+						<div className="space-y-3 font-semibold mb-10">
+							<div className="flex justify-between pt-3 text-black">
+								<span>Price</span>
+								<span>₹{cart.cart?.totalPirce}</span>
+							</div>
 
-              <div className="flex justify-between pt-3 ">
-                <span>Dilivery Charge</span>
-                <span className="text-green-600">Free</span>
-              </div>
+							<div className="flex justify-between pt-3 ">
+								<span>Discount</span>
+								<span className="text-green-600">-₹{cart.cart?.discount}</span>
+							</div>
 
-              <div className="flex justify-between pt-3 ">
-                <span>Total Amount</span>
-                <span className="text-green-600 font-bold">₹{cart.cart?.totalDiscountedPrice}</span>
-              </div>
-            </div>
-            <Button
-              onClick={handleCheckOut}
-              className="w-full mt-5"
-              variant="contained"
-              sx={{ px: "2.5rem", py: ".7rem", bgcolor: "#9155fd" }}
-            >
-              Checkout
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+							<div className="flex justify-between pt-3 ">
+								<span>Dilivery Charge</span>
+								<span className="text-green-600">Free</span>
+							</div>
+
+							<div className="flex justify-between pt-3 ">
+								<span>Total Amount</span>
+								<span className="text-green-600 font-bold">
+									₹{cart.cart?.totalDiscountedPrice}
+								</span>
+							</div>
+						</div>
+						<Button
+							onClick={handleCheckOut}
+							className="w-full mt-5"
+							variant="contained"
+							sx={{ px: "2.5rem", py: ".7rem", bgcolor: "#9155fd" }}
+						>
+							Checkout
+						</Button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default Cart;

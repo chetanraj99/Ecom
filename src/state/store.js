@@ -6,9 +6,9 @@ import { thunk } from "redux-thunk";
 
 // Combine reducers
 const rootReducer = combineReducers({
-  products: customerProductReducer,
-  cart: cartReducer,
-  order: orderReducer,
+	products: customerProductReducer,
+	cart: cartReducer,
+	order: orderReducer,
 });
 
 // Create store with middleware
