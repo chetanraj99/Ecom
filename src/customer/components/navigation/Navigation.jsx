@@ -209,36 +209,35 @@ export default function Navigation() {
 													cursor: "pointer",
 												}}
 											>
-												R
+												Avataris
 											</Avatar>
-											<Menu
-												anchorEl={anchorEl}
-												open={openUserMenu}
-												onClose={handleCloseUserMenu}
-											>
-												<MenuItem
-													className="bg-red-500 font-bold"
-													onClick={handleCloseUserMenu}
-												>
-													Profile
+											{/* <Menu anchorEl={anchorEl} open={openUserMenu}>
+												<MenuItem className="bg-red-500 font-bold">
+													<Button onClick={handleCloseUserMenu}>Profile</Button>
 												</MenuItem>
-												<MenuItem
-													onClick={(e) => {
-														e.stopPropagation();
-														navigate("/account/order");
-													}}
-												>
-													My Orders
+												<MenuItem>
+													<Button
+														onClick={() => {
+															setOpen(false);
+															// handleCloseUserMenu();
+															// navigate("/account/order");
+														}}
+													>
+														My Orders
+													</Button>
 												</MenuItem>
 												<MenuItem onClick={handleCloseUserMenu}>
 													Logout
 												</MenuItem>
-											</Menu>
+											</Menu> */}
 										</div>
 									) : (
 										<Button
 											sx={{ mx: "10px" }}
-											onClick={() => setLoginModal(true)}
+											onClick={() => {
+												setLoginModal(true);
+												setOpen(false);
+											}}
 											className="text-sm self-start bg-red-500 font-medium border border-red-500 text-gray-800 hover:text-gray-800"
 										>
 											Sign In
@@ -427,7 +426,13 @@ export default function Navigation() {
 													<MenuItem onClick={handleCloseUserMenu}>
 														Profile
 													</MenuItem>
-													<MenuItem onClick={() => navigate("/account/order")}>
+													<MenuItem
+														onClick={() => {
+															setOpen(false);
+															handleCloseUserMenu();
+															navigate("/account/order");
+														}}
+													>
 														My Orders
 													</MenuItem>
 													<MenuItem
