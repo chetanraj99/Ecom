@@ -7,17 +7,26 @@ import { findProducts } from "../../../state/Product/Action";
 import { useDispatch, useSelector } from "react-redux";
 
 const HomePage = () => {
-	const [kurtas, setKurtas] = useState(mens_kurta);
+	const [kurtas, setKurtas] = useState();
 	const [shoes, setShoes] = useState([]);
+	const [loading, setLoading] = useState(false);
 	const [shirts, setShirts] = useState([]);
 	const [sarees, setSarees] = useState([]);
 
 	useEffect(() => {
 		const getKurtas = async () => {
-			const { data } = await api.get(
-				"api/products?colors=&size=0&minPrice=399&maxPrice=999&minDiscount=0&category=mens_kurta&stock=null&sort=price_low&pageNumber=0&pageSize=4"
-			);
-			setKurtas(data.content);
+			try {
+				setLoading(true);
+				const { data } = await api.get(
+					"api/products?colors=&size=0&minPrice=399&maxPrice=999&minDiscount=0&category=mens_kurta&stock=null&sort=price_low&pageNumber=0&pageSize=4"
+				);
+				console.log("data", data);
+				setKurtas(data.content);
+				setLoading(false);
+			} catch (error) {
+				setLoading(false);
+				console.log(error);
+			}
 		};
 		getKurtas();
 	}, []);
@@ -53,9 +62,14 @@ const HomePage = () => {
 
 	return (
 		<div>
-			<MainCarousel />
+			<MainCarousel data={kurtas} />
 			<div className="space-y-10 py-20 flex flex-col justify-center px-5 lg:px-10">
-				<HomeSectionCarousel data={kurtas} sectionName={"Men's Kurta"} />
+				<HomeSectionCarousel
+					loading={loading}
+					setLoading={setLoading}
+					data={kurtas}
+					sectionName={"Men's Kurta"}
+				/>
 				<HomeSectionCarousel data={mens_kurta} sectionName={"Men's Shoes"} />
 				<HomeSectionCarousel data={mens_kurta} sectionName={"Men's Shirt"} />
 				<HomeSectionCarousel data={mens_kurta} sectionName={"Women's Saree"} />

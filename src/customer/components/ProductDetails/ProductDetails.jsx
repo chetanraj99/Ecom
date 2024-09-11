@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
-import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
+import {
+	Box,
+	Button,
+	Grid,
+	LinearProgress,
+	Rating,
+	Skeleton,
+} from "@mui/material";
 import ProductReviewCard from "./ProductReviewCard";
 import { mens_kurta } from "../../Data/mens_kurta";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
@@ -65,6 +72,7 @@ function classNames(...classes) {
 }
 
 export default function ProductDetails() {
+	const [loading, setLoading] = useState(false);
 	// const [selectedColor, setSelectedColor] = useState("");
 	const [selectedSize, setSelectedSize] = useState("");
 	const params = useParams();
@@ -82,8 +90,18 @@ export default function ProductDetails() {
 	};
 
 	useEffect(() => {
-		const data = { productId: params.productId };
-		dispatch(findProductsById(data));
+		const getData = async () => {
+			try {
+				setLoading(true);
+				const data = { productId: params.productId };
+				await dispatch(findProductsById(data));
+				setLoading(false);
+			} catch (error) {
+				setLoading(true);
+				console.log(error);
+			}
+		};
+		getData();
 	}, [params.productId]);
 
 	return (
@@ -127,16 +145,21 @@ export default function ProductDetails() {
 						</li>
 					</ol>
 				</nav>
-				<section className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-10 px-4 pt-10">
+				<section className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-10  ">
 					{/* Image gallery */}
-					<div className="flex flex-col items-center">
-						<div className="overflow-hidden rounded-lg max-w-[30rem] max-h-[35rem]">
-							<img
-								src={products.product?.imageUrl}
-								alt={product.images[0].alt}
-								className="h-full w-full object-cover object-center"
-							/>
+					<div className="flex flex-col items-center pt-5">
+						<div className="overflow-hidden rounded-lg w-[20rem] max-w-[30rem] h-[500px]">
+							{!loading ? (
+								<img
+									src={products.product?.imageUrl}
+									alt={product.images[0].alt}
+									className="h-full w-full object-cover object-center"
+								/>
+							) : (
+								<Skeleton variant="rectangular" width="100%" height="100%" />
+							)}
 						</div>
+
 						<div className="flex flex-wrap space-x-5 justify-center">
 							{product.images.map((item) => (
 								<div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg max-w-[5rem] max-h-[5rem] mt-4">

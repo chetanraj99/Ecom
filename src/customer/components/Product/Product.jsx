@@ -9,8 +9,6 @@ import {
 	PlusIcon,
 	Squares2X2Icon,
 } from "@heroicons/react/20/solid";
-import { mens_kurta } from "../../Data/mens_kurta";
-import ProductCard from "./ProductCard";
 import { filters, singleFilter } from "./FilterData";
 import {
 	FormControl,
@@ -23,6 +21,7 @@ import {
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { useDispatch, useSelector } from "react-redux";
 import { findProducts } from "../../../state/Product/Action";
+import ProductCard from "./ProductCard";
 
 const sortOptions = [
 	{ name: "Price: Low to High", href: "#", current: false },
@@ -40,23 +39,26 @@ export default function Product() {
 	const param = useParams();
 	const dispatch = useDispatch();
 	const { products } = useSelector((store) => store);
-	console.log(products.products);
+
 	const decodedQueryString = decodeURIComponent(location.search);
 	const searchParamms = new URLSearchParams(decodedQueryString);
 	const colorValue = searchParamms.get("color");
 	const sizeValue = searchParamms.get("size");
 	const priceValue = searchParamms.get("price");
-	const disccount = searchParamms.get("disccount");
+	const discount = searchParamms.get("discount");
 	const sortValue = searchParamms.get("sort");
 	const pageNumber = searchParamms.get("page") || 1;
 	const stock = searchParamms.get("stock");
 
+	// Handle pagination change
 	const handlePaginationChange = (event, value) => {
-		const searchParamms = new URLSearchParams(location.search);
-		searchParamms.set("page", value);
-		const query = searchParamms.toString();
+		const searchParams = new URLSearchParams(location.search);
+		searchParams.set("page", value);
+		const query = searchParams.toString();
 		navigate({ search: `?${query}` });
 	};
+
+	// Handle filters
 	const handleFilter = (value, sectionId) => {
 		const searchParams = new URLSearchParams(location.search);
 		let filterValue = searchParams.getAll(sectionId);
@@ -78,14 +80,15 @@ export default function Product() {
 		navigate({ search: `?${query}` });
 	};
 
+	// Handle radio filter change
 	const handleRadioFilterChange = (e, sectionId) => {
 		const searchParams = new URLSearchParams(location.search);
-
 		searchParams.set(sectionId, e.target.value);
 		const query = searchParams.toString();
 		navigate({ search: `?${query}` });
 	};
 
+	// Fetch data on initial page load and when filters change
 	useEffect(() => {
 		const [minPrice, maxPrice] =
 			priceValue === null ? [0, 0] : priceValue.split("-").map(Number);
@@ -93,22 +96,24 @@ export default function Product() {
 		const data = {
 			category: param.levelThree,
 			colors: colorValue || [],
-			sizes: sizeValue | [],
+			sizes: sizeValue || [],
 			minPrice,
 			maxPrice,
-			minDiscount: disccount || 0,
+			minDiscount: discount || 0,
 			sort: sortValue || "price_low",
 			pageNumber: pageNumber - 1,
 			pageSize: 4,
 			stock: stock,
 		};
+
+		// Fetch products when the component mounts or filters change
 		dispatch(findProducts(data));
 	}, [
 		param.levelThree,
 		colorValue,
 		sizeValue,
 		priceValue,
-		disccount,
+		discount,
 		sortValue,
 		pageNumber,
 		stock,

@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 import { removeCartItem, updateCartItem } from "../../../state/Cart/Action";
 
 const CartItem = ({ item }) => {
-	console.log(item);
 	const dispatch = useDispatch();
 	const handleUpdateCartItem = (num) => {
 		console.log("cart item ", item);

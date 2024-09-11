@@ -1,12 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import AliceCarousel from "react-alice-carousel";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import { Button } from "@mui/material";
+import { Button, Skeleton } from "@mui/material";
 
-const HomeSectionCarousel = ({ data, sectionName }) => {
+const HomeSectionCarousel = ({ data, sectionName, loading, setLoading }) => {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const carouselRef = useRef(null);
+	const [items, setItems] = useState([]);
 
 	const responsive = {
 		500: {
@@ -26,7 +27,21 @@ const HomeSectionCarousel = ({ data, sectionName }) => {
 		},
 	};
 
-	const items = data.map((item) => <HomeSectionCard product={item} />);
+	useEffect(() => {
+		if (loading) {
+			const items = Array(5)
+				.fill(0)
+				.map((_, index) => (
+					<Skeleton sx={{ width: "200px", height: "400px" }} key={index} />
+				));
+			setItems(items);
+		} else if (Array.isArray(data) && data.length > 0) {
+			const items = data.map((item, index) => (
+				<HomeSectionCard key={index} product={item} />
+			));
+			setItems(items);
+		}
+	}, [data, loading]);
 
 	const handleSlidePrev = () => {
 		if (carouselRef.current) {
@@ -78,7 +93,7 @@ const HomeSectionCarousel = ({ data, sectionName }) => {
 						aria-label="next"
 					>
 						<KeyboardArrowLeftIcon
-							sx={{ transform: "rotate(90deg)", color: "black" }}
+							style={{ transform: "rotate(90deg)", color: "black" }}
 						/>
 					</Button>
 				)}
